@@ -72,35 +72,6 @@
             text-align: center;
             font-style: italic;
         }
-        #file-content {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background: var(--bg-color);
-            box-shadow: inset 3px 3px 7px var(--shadow-color), 
-                        inset -3px -3px 7px var(--highlight-color);
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: monospace;
-            font-size: 14px;
-            display: none;
-        }
-        #back-button {
-            display: none;
-            margin-bottom: 10px;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            background: var(--bg-color);
-            box-shadow: 3px 3px 7px var(--shadow-color), 
-                        -3px -3px 7px var(--highlight-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        #back-button:hover {
-            box-shadow: inset 3px 3px 7px var(--shadow-color), 
-                        inset -3px -3px 7px var(--highlight-color);
-        }
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -120,16 +91,14 @@
 <body>
     <div class="container">
         <h1>Repository Contents</h1>
-        <button id="back-button">Back to Directory</button>
         <div id="file-list" class="loading">Loading repository contents...</div>
-        <div id="file-content"></div>
     </div>
 
     <script>
         const username = 'lthalex915';
         const repo = 'cderevisionforyear3';
         const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents`;
-        const rawContentUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/`;
+        const pagesUrl = `https://${username}.github.io/${repo}/`;
 
         async function fetchContents(path = '') {
             try {
@@ -139,17 +108,6 @@
             } catch (error) {
                 console.error('Error fetching repository contents:', error);
                 return [];
-            }
-        }
-
-        async function fetchFileContent(path) {
-            try {
-                const response = await fetch(`${rawContentUrl}${path}`);
-                const content = await response.text();
-                return content;
-            } catch (error) {
-                console.error('Error fetching file content:', error);
-                return 'Error loading file content';
             }
         }
 
@@ -167,11 +125,11 @@
             for (const item of contents) {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = '#';
                 a.textContent = item.name;
                 a.className = item.type === 'dir' ? 'folder' : 'file';
 
                 if (item.type === 'dir') {
+                    a.href = '#';
                     a.onclick = async (e) => {
                         e.preventDefault();
                         if (!li.querySelector('ul')) {
@@ -181,14 +139,8 @@
                         }
                     };
                 } else {
-                    a.onclick = async (e) => {
-                        e.preventDefault();
-                        const content = await fetchFileContent(item.path);
-                        document.getElementById('file-list').style.display = 'none';
-                        document.getElementById('file-content').style.display = 'block';
-                        document.getElementById('file-content').textContent = content;
-                        document.getElementById('back-button').style.display = 'block';
-                    };
+                    a.href = `${pagesUrl}${item.path}`;
+                    a.target = '_blank';
                 }
 
                 li.appendChild(a);
@@ -200,18 +152,9 @@
 
         window.addEventListener('load', () => {
             const fileList = document.getElementById('file-list');
-            const fileContent = document.getElementById('file-content');
-            const backButton = document.getElementById('back-button');
-
             fileList.classList.remove('loading');
             fileList.textContent = '';
             renderContents(fileList);
-
-            backButton.addEventListener('click', () => {
-                fileList.style.display = 'block';
-                fileContent.style.display = 'none';
-                backButton.style.display = 'none';
-            });
         });
     </script>
 </body>
