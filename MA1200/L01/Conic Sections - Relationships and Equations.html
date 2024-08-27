@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data: blob: https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com; media-src 'self' data: blob: https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org; frame-src 'self' https://www.youtube.com; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conic Sections: Relationships and Equations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .plot {
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+        #relationship-diagram {
+            width: 100%;
+            height: 400px;
+        }
+        .general-eq {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .slider-container label {
+            width: 30px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .slider-value {
+            width: 30px;
+            text-align: left;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conic Sections: Relationships and Equations</h1>
+
+    <p>Circles, ellipses, parabolas, and hyperbolas are all conic sections, meaning they can be formed by intersecting a plane with a double cone. Their equations are related and can be derived from a general equation.</p>
+
+    <h2>General Equation</h2>
+    <div class="general-eq">
+        <p>The general equation for conic sections is:</p>
+        <p><strong>Ax² + Bxy + Cy² + Dx + Ey + F = 0</strong></p>
+        <p>Where A, B, C, D, E, and F are constants, and A, B, and C are not all zero.</p>
+    </div>
+
+    <h3>Relationship to Specific Conic Sections</h3>
+    <p>The general equation relates to specific conic sections as follows:</p>
+    <ul>
+        <li><strong>Circle:</strong> A = C ≠ 0, B = 0</li>
+        <li><strong>Ellipse:</strong> A ≠ C, both non-zero, B = 0</li>
+        <li><strong>Parabola:</strong> Either A = 0 or C = 0 (but not both), B = 0</li>
+        <li><strong>Hyperbola:</strong> A and C are non-zero and have opposite signs, B = 0</li>
+    </ul>
+
+    <h3>Interactive General Equation Demo</h3>
+    <div class="controls">
+        <div class="slider-container">
+            <label for="A">A:</label>
+            <input type="range" id="A" min="-10" max="10" value="1" step="0.1">
+            <span id="A-value" class="slider-value">1</span>
+        </div>
+        <div class="slider-container">
+            <label for="C">C:</label>
+            <input type="range" id="C" min="-10" max="10" value="1" step="0.1">
+            <span id="C-value" class="slider-value">1</span>
+        </div>
+    </div>
+    <div id="general-eq-plot" class="plot"></div>
+
+    <h2>Relationship Diagram</h2>
+    <div id="relationship-diagram"></div>
+
+    <h2>Specific Equations</h2>
+    <div id="equation-plot" class="plot"></div>
+    <div class="controls">
+        <label for="conic-type">Conic Type: </label>
+        <select id="conic-type">
+            <option value="circle">Circle</option>
+            <option value="ellipse">Ellipse</option>
+            <option value="parabola">Parabola</option>
+            <option value="hyperbola">Hyperbola</option>
+        </select>
+    </div>
+
+    <h3>1. Circle</h3>
+    <p>Equation: (x - h)² + (y - k)² = r²</p>
+    <p>Where (h, k) is the center and r is the radius.</p>
+
+    <h3>2. Ellipse</h3>
+    <p>Equation: ((x - h)²/a²) + ((y - k)²/b²) = 1</p>
+    <p>Where (h, k) is the center, and a and b are the lengths of the semi-major and semi-minor axes.</p>
+
+    <h3>3. Parabola</h3>
+    <p>Equation: (y - k) = a(x - h)²</p>
+    <p>Where (h, k) is the vertex and a determines the direction and width of the parabola.</p>
+
+    <h3>4. Hyperbola</h3>
+    <p>Equation: ((x - h)²/a²) - ((y - k)²/b²) = 1</p>
+    <p>Where (h, k) is the center, and a and b determine the shape and orientation of the hyperbola.</p>
+
+    <script>
+        // Relationship Diagram using D3.js
+        const svg = d3.select("#relationship-diagram")
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%");
+
+        const data = {
+            nodes: [
+                {id: "Conic Sections", group: 1},
+                {id: "Circle", group: 2},
+                {id: "Ellipse", group: 2},
+                {id: "Parabola", group: 2},
+                {id: "Hyperbola", group: 2}
+            ],
+            links: [
+                {source: "Conic Sections", target: "Circle", label: "Plane ⊥ Axis"},
+                {source: "Conic Sections", target: "Ellipse", label: "Plane ∠ Axis < ∠ Side"},
+                {source: "Conic Sections", target: "Parabola", label: "Plane ∥ Side"},
+                {source: "Conic Sections", target: "Hyperbola", label: "Plane ∠ Axis > ∠ Side"}
+            ]
+        };
+
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-1000))
+            .force("center", d3.forceCenter(400, 200));
+
+        const link = svg.append("g")
+            .selectAll("line")
+            .data(data.links)
+            .enter().append("line")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", 2);
+
+        const linkText = svg.append("g")
+            .selectAll("text")
+            .data(data.links)
+            .enter().append("text")
+            .attr("font-size", "10px")
+            .attr("text-anchor", "middle")
+            .text(d => d.label);
+
+        const node = svg.append("g")
+            .selectAll("circle")
+            .data(data.nodes)
+            .enter().append("circle")
+            .attr("r", 30)
+            .attr("fill", d => d.group === 1 ? "#ff9999" : "#99ccff");
+
+        const text = svg.append("g")
+            .selectAll("text")
+            .data(data.nodes)
+            .enter().append("text")
+            .text(d => d.id)
+            .attr("font-size", "12px")
+            .attr("text-anchor", "middle")
+            .attr("dy", 4);
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            linkText
+                .attr("x", d => (d.source.x + d.target.x) / 2)
+                .attr("y", d => (d.source.y + d.target.y) / 2);
+
+            node
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+
+            text
+                .attr("x", d => d.x)
+                .attr("y", d => d.y);
+        });
+
+        // Equation Plot using Plotly.js
+        function drawConicSection(type) {
+            const x = math.range(-5, 5, 0.1).toArray();
+            let y1, y2;
+
+            switch(type) {
+                case "circle":
+                    y1 = x.map(t => Math.sqrt(4 - t*t));
+                    y2 = x.map(t => -Math.sqrt(4 - t*t));
+                    break;
+                case "ellipse":
+                    y1 = x.map(t => Math.sqrt(4 * (1 - t*t/9)));
+                    y2 = x.map(t => -Math.sqrt(4 * (1 - t*t/9)));
+                    break;
+                case "parabola":
+                    y1 = x.map(t => t*t/4);
+                    y2 = null;
+                    break;
+                case "hyperbola":
+                    y1 = x.map(t => Math.sqrt(t*t/9 - 1));
+                    y2 = x.map(t => -Math.sqrt(t*t/9 - 1));
+                    break;
+            }
+
+            const trace1 = {x: x, y: y1, mode: 'lines', name: 'Upper'};
+            const trace2 = y2 ? {x: x, y: y2, mode: 'lines', name: 'Lower'} : null;
+
+            const layout = {
+                title: `${type.charAt(0).toUpperCase() + type.slice(1)} Plot`,
+                xaxis: {range: [-5, 5], scaleanchor: "y", scaleratio: 1},
+                yaxis: {range: [-5, 5]},
+                showlegend: false,
+                width: 600,
+                height: 600
+            };
+
+            Plotly.newPlot('equation-plot', [trace1, trace2].filter(t => t), layout);
+        }
+
+        document.getElementById('conic-type').addEventListener('change', (e) => {
+            drawConicSection(e.target.value);
+        });
+
+        drawConicSection('circle');
+
+        // General Equation Interactive Demo
+        function drawGeneralEquation(A, C) {
+            const x = math.range(-5, 5, 0.1).toArray();
+            let y1, y2;
+
+            if (A === 0 && C === 0) {
+                y1 = x.map(() => 0);
+                y2 = null;
+            } else if (A === 0) {
+                y1 = x.map(() => Math.sqrt(-1/C));
+                y2 = x.map(() => -Math.sqrt(-1/C));
+            } else if (C === 0) {
+                y1 = x.map(t => Math.sqrt(-A/C * t*t));
+                y2 = x.map(t => -Math.sqrt(-A/C * t*t));
+            } else {
+                y1 = x.map(t => Math.sqrt(-A/C * t*t + 1/C));
+                y2 = x.map(t => -Math.sqrt(-A/C * t*t + 1/C));
+            }
+
+            const trace1 = {x: x, y: y1, mode: 'lines', name: 'Upper'};
+            const trace2 = y2 ? {x: x, y: y2, mode: 'lines', name: 'Lower'} : null;
+
+            const layout = {
+                title: 'General Equation: ' + `${A}x² + ${C}y² = 1`,
+                xaxis: {range: [-5, 5], scaleanchor: "y", scaleratio: 1},
+                yaxis: {range: [-5, 5]},
+                showlegend: false,
+                width: 600,
+                height: 600
+            };
+
+            Plotly.newPlot('general-eq-plot', [trace1, trace2].filter(t => t), layout);
+        }
+
+        function updateGeneralEquation() {
+            const A = parseFloat(document.getElementById('A').value);
+            const C = parseFloat(document.getElementById('C').value);
+            document.getElementById('A-value').textContent = A.toFixed(1);
+            document.getElementById('C-value').textContent = C.toFixed(1);
+            drawGeneralEquation(A, C);
+        }
+
+        document.getElementById('A').addEventListener('input', updateGeneralEquation);
+        document.getElementById('C').addEventListener('input', updateGeneralEquation);
+
+        updateGeneralEquation();
+    </script>
+
+
+</body></html>
