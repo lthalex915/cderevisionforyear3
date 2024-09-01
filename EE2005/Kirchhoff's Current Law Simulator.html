@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data: blob: https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com; media-src 'self' data: blob: https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org; frame-src 'self' https://www.youtube.com; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirchhoff's Current Law Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        input {
+            width: 50px;
+            margin: 5px;
+        }
+        button {
+            margin: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kirchhoff's Current Law Simulator</h2>
+        <div>
+            <label for="i_in">I_in:</label>
+            <input type="number" id="i_in" min="0" step="0.1" value="1">
+            <button onclick="addCurrent('in')">Add I_in</button>
+        </div>
+        <div>
+            <label for="i_out">I_out:</label>
+            <input type="number" id="i_out" min="0" step="0.1" value="1">
+            <button onclick="addCurrent('out')">Add I_out</button>
+        </div>
+        <button onclick="reset()">Reset</button>
+        <canvas id="kcl_canvas" width="300" height="300"></canvas>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('kcl_canvas');
+        const ctx = canvas.getContext('2d');
+        let currents = { in: [], out: [] };
+
+        function drawCircuit() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(150, 150, 100, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            drawArrows();
+            updateResult();
+        }
+
+        function drawArrows() {
+            currents.in.forEach((current, index) => {
+                drawArrow(150, 50, 150, 150, `${current}A`, 'green', index);
+            });
+
+            currents.out.forEach((current, index) => {
+                drawArrow(150, 150, 150, 250, `${current}A`, 'red', index);
+            });
+        }
+
+        function drawArrow(fromX, fromY, toX, toY, label, color, index) {
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            const length = Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2;
+
+            ctx.save();
+            ctx.translate(fromX, fromY);
+            ctx.rotate(angle);
+
+            const offset = index * 20 - (currents[color === 'green' ? 'in' : 'out'].length - 1) * 10;
+
+            ctx.beginPath();
+            ctx.moveTo(0, offset);
+            ctx.lineTo(length - 10, offset);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(length - 10, offset - 5);
+            ctx.lineTo(length, offset);
+            ctx.lineTo(length - 10, offset + 5);
+            ctx.fill();
+
+            ctx.fillText(label, length / 2 - 10, offset - 10);
+
+            ctx.restore();
+        }
+
+        function addCurrent(type) {
+            const value = parseFloat(document.getElementById(`i_${type}`).value);
+            if (!isNaN(value) && value > 0) {
+                currents[type].push(value);
+                drawCircuit();
+            }
+        }
+
+        function updateResult() {
+            const totalIn = currents.in.reduce((sum, current) => sum + current, 0);
+            const totalOut = currents.out.reduce((sum, current) => sum + current, 0);
+            const result = document.getElementById('result');
+            result.textContent = `Total I_in: ${totalIn.toFixed(2)}A, Total I_out: ${totalOut.toFixed(2)}A`;
+            
+            if (Math.abs(totalIn - totalOut) < 0.001) {
+                result.textContent += " - Kirchhoff's Current Law is satisfied!";
+                result.style.color = 'green';
+            } else {
+                result.textContent += " - Kirchhoff's Current Law is not satisfied.";
+                result.style.color = 'red';
+            }
+        }
+
+        function reset() {
+            currents = { in: [], out: [] };
+            drawCircuit();
+        }
+
+        drawCircuit();
+    </script>
+
+
+</body></html>
